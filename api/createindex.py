@@ -1,4 +1,4 @@
-from llama_index.core import SimpleDirectoryReader 
+from llama_index.core import SimpleDirectoryReader
 from llama_index.core import ServiceContext
 from llama_index.core import VectorStoreIndex
 from utils import build_sentence_window_index
@@ -29,9 +29,9 @@ def check_and_create_directory(directory_path):
         print(f"Directory '{directory_path}' created successfully.")
     else:
         print(f"Directory '{directory_path}' already exists.")
-        
-def construct_basic_index(src_directory_path,index_directory):        
-    check_and_create_directory(index_directory)     
+
+def construct_basic_index(src_directory_path,index_directory):
+    check_and_create_directory(index_directory)
     if useopenai:
         from langchain.chat_models import ChatOpenAI
         modelname = config['api']['openai_modelname']
@@ -53,16 +53,16 @@ def construct_basic_index(src_directory_path,index_directory):
     service_context = ServiceContext.from_defaults(
         llm=llm, embed_model=embed_modelname
     )
-   
+
     documents = SimpleDirectoryReader(src_directory_path, recursive=True).load_data()
     index = VectorStoreIndex.from_documents(documents,
                                             service_context=service_context)
-      
-    index.storage_context.persist(persist_dir=index_directory)     
+
+    index.storage_context.persist(persist_dir=index_directory)
     return index
 
-def construct_sentencewindow_index(src_directory_path,index_directory):    
-    
+def construct_sentencewindow_index(src_directory_path,index_directory):
+
     if useopenai:
         from langchain.chat_models import ChatOpenAI
         modelname = config['api']['openai_modelname']
@@ -89,7 +89,7 @@ def construct_sentencewindow_index(src_directory_path,index_directory):
     )
     return index
 
-def construct_automerge_index(src_directory_path,index_directory):    
+def construct_automerge_index(src_directory_path,index_directory):
     if useopenai:
         from langchain.chat_models import ChatOpenAI
         modelname = config['api']['openai_modelname']
@@ -107,8 +107,8 @@ def construct_automerge_index(src_directory_path,index_directory):
         temperature=0.1,
         f16_kv=True
         )
-    documents = SimpleDirectoryReader(src_directory_path, recursive=True).load_data()    
-    
+    documents = SimpleDirectoryReader(src_directory_path, recursive=True).load_data()
+
     index = build_automerging_index(
     documents,
     llm,
@@ -116,12 +116,12 @@ def construct_automerge_index(src_directory_path,index_directory):
     save_dir=index_directory
     )
     return index
- 
-    
+
+
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
- 
- 
+
+
 #Create basic index
 index = construct_basic_index(src_data_dir,basic_idx_dir)
 #create sentencewindow index
